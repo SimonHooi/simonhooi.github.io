@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simon Hooi — Data & Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d;
+    --surface: #0f1116;
+    --border: rgba(255,255,255,0.06);
+    --text: #d8d9e0;
+    --text-muted: #666878;
+    --accent: #c9a84c;
+    --accent-dim: rgba(201,168,76,0.12);
+    --accent-glow: rgba(201,168,76,0.25);
+    --white: #f0f1f5;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    height: 60vh;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 5rem 0 3.5rem;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .header-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .contact-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .contact-bar a,
+  .contact-bar span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .contact-bar a:hover { color: var(--accent); }
+
+  .contact-bar span::before { content: '· '; color: var(--border); }
+  .contact-bar span:first-child::before { content: ''; }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(201,168,76,0.3);
+    background: var(--accent-dim);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.8s ease both;
+  }
+
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.2s; }
+  section:nth-child(4) { animation-delay: 0.3s; }
+  section:nth-child(5) { animation-delay: 0.4s; }
+  section:nth-child(6) { animation-delay: 0.5s; }
+  section:nth-child(7) { animation-delay: 0.6s; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .summary-text {
+    font-size: 0.97rem;
+    line-height: 1.85;
+    color: var(--text);
+    max-width: 72ch;
+  }
+
+  /* ── EXPERIENCE ── */
+  .job {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .job:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .job-title {
+    font-family: 'Figtree', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+
+  .job-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    background: var(--accent-dim);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .job-company {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .job ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .job li {
+    font-size: 0.88rem;
+    color: var(--text);
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.7;
+  }
+
+  .job li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.7rem;
+    top: 0.25em;
+  }
+
+  /* ── SKILLS GRID ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .skill-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .skill-group:hover {
+    border-color: rgba(201,168,76,0.25);
+    background: rgba(201,168,76,0.04);
+  }
+
+  .skill-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .skill-group p {
+    font-size: 0.8rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── COMPETENCIES ── */
+  .competencies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .competency {
+    font-size: 0.82rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .competency:hover { border-color: rgba(201,168,76,0.3); }
+
+  /* ── EDUCATION / CERTS ── */
+  .edu-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .edu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .edu-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.2rem;
+  }
+
+  .edu-institution {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .cert-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  /* ── LANGUAGES ── */
+  .lang-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .lang-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .lang-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2.5rem 0;
+    text-align: center;
+  }
+
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    h1 { font-size: 2.4rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .job-header { flex-direction: column; }
+  }
+
+  @media print {
+    body::before, body::after { display: none; }
+    section, header { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-label">Resume · Perth, WA · Available Now</div>
+    <h1>Simon Hooi</h1>
+    <div class="subtitle">Finance × Data × AI</div>
+    <div class="contact-bar">
+      <span><a href="mailto:simonhooi.cs@gmail.com">simonhooi.cs@gmail.com</a></span>
+      <span>0480 218 240</span>
+      <span>Perth, Western Australia</span>
+    </div>
+    <div class="tags">
+      <span class="tag">CPA Australia</span>
+      <span class="tag">Snowflake SnowPro</span>
+      <span class="tag">PL-300 Power BI</span>
+      <span class="tag">Xero Advisory</span>
+      <span class="tag">AWS · Azure</span>
+      <span class="tag">Python · SQL</span>
+    </div>
+  </header>
+
+  <!-- SUMMARY -->
+  <section>
+    <div class="section-label">Professional Summary</div>
+    <p class="summary-text">
+      A CPA-licensed, data-driven professional bridging the gap between finance and technology — turning complex data into strategic business intelligence. With deep expertise across the modern data stack and cloud infrastructure spanning AWS and Azure, I bring both technical depth and commercial acumen to deliver insights that matter.
+    </p>
+    <br>
+    <p class="summary-text">
+      Experienced in architecting end-to-end data pipelines, financial reporting systems, and AI-powered analytics solutions that scale with business complexity. Passionate about applying AI capabilities for forecasting, operational analytics, and decision support — moving beyond traditional FP&A toward an intelligent, data-first approach to financial strategy.
+    </p>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section>
+    <div class="section-label">Experience</div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Financial Analyst → Data & AI Engineer</div>
+        <div class="job-period">2023 — Present</div>
+      </div>
+      <div class="job-company">Knight Health Pty Ltd · Perth, WA</div>
+      <ul>
+        <li>Pioneered and built the company's Data function, introducing analytics through Power BI dashboards to provide operational and financial insights across the organisation.</li>
+        <li>Initiated the Snowflake data platform, designing structured and semi-structured database architecture and integrating data across multiple systems through APIs.</li>
+        <li>Developed an internal LLM AI-enabled web application using Python and Claude to allow company-wide access to data insights and automation tools.</li>
+        <li>Oversaw Accounts Receivable, improving debtor management and operational efficiency with Power Automate.</li>
+        <li>Developed invoice automation tools using Python, reducing accounting headcount by 50%.</li>
+        <li>Built financial models to evaluate new business locations, acquisitions, and strategic collaborations — including breakeven, pricing strategy, and profitability analysis.</li>
+        <li>Managed invoice financing facilities, audit, and end-of-month reconciliations.</li>
+        <li>Developed the annual budget, forecasts, and variance analysis across multiple departments.</li>
+        <li>Contributed to the preparation of R&D Tax Incentive claims.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Finance Manager</div>
+        <div class="job-period">2017 — 2023</div>
+      </div>
+      <div class="job-company">CMYK Summit Pty Ltd · Malaysia</div>
+      <ul>
+        <li>Managed relationships with external stakeholders including suppliers, investors, lenders, auditors, and corporate secretaries.</li>
+        <li>Created and monitored cost structures, profit margins, and company budgets.</li>
+        <li>Managed Malaysia's statutory obligations including EPF, corporate tax filings, and annual financial reporting.</li>
+        <li>Led implementation of CRM and accounting systems including HubSpot and Xero to improve operational efficiency and financial tracking.</li>
+        <li>Managed the HR function including employment contracts, payroll administration, and staff remuneration structures.</li>
+        <li>Supported business performance through data analysis using Excel (Power Query, Power Pivot), credit control, P&L forecasting, and cash flow management.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div class="job-title">Global Project Architect → Transactional Specialist</div>
+        <div class="job-period">2013 — 2017</div>
+      </div>
+      <div class="job-company">Microsoft · Singapore</div>
+      <ul>
+        <li>Developed and documented secure, reliable, and scalable process solutions within defined timelines adhering to Microsoft's data privacy and security protocols.</li>
+        <li>Managed project timelines, deliverables, and resources leveraging project management and technical expertise.</li>
+        <li>Collaborated with cross-regional operations teams, internal auditors, and global project stakeholders to ensure successful delivery.</li>
+        <li>Selected for an international assignment to the Philippines to provide training and mentorship for staff at a newly established operations centre.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TECHNICAL SKILLS -->
+  <section>
+    <div class="section-label">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-label">Data Platform</div>
+        <p>Snowflake, Fivetran, Census, Power BI (PL-300), Power Query, Power Pivot</p>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Cloud Infrastructure</div>
+        <p>AWS (EB, RDS, S3, EC2, Lambda, EventBridge, IAM) · Azure (App Service, SQL DB, API Mgmt)</p>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Programming</div>
+        <p>Python, SQL, HTML, CSS, JavaScript · Cursor, Replit, VS Code</p>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Finance & Accounting</div>
+        <p>Xero (Advisory Certificate), Salesforce, Employment Hero, Deputy</p>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Automation & AI</div>
+        <p>Power Automate, Power Apps, Claude API, LLM application development</p>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">API & Integration</div>
+        <p>REST APIs, Postman, AWS API Gateway, Azure API Management, Xero API</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE COMPETENCIES -->
+  <section>
+    <div class="section-label">Core Competencies</div>
+    <div class="competencies">
+      <span class="competency">Commercial Acumen</span>
+      <span class="competency">Data-Driven Decision Making</span>
+      <span class="competency">Process Automation</span>
+      <span class="competency">Digital Transformation</span>
+      <span class="competency">Financial Modelling</span>
+      <span class="competency">Project Management — Agile/Waterfall</span>
+      <span class="competency">SDLC</span>
+      <span class="competency">Critical Thinking</span>
+      <span class="competency">Attention to Detail</span>
+      <span class="competency">Stakeholder Management</span>
+    </div>
+  </section>
+
+  <!-- EDUCATION & CERTIFICATIONS -->
+  <section>
+    <div class="section-label">Education & Certifications</div>
+    <div class="edu-grid">
+      <div class="edu-item">
+        <div>
+          <div class="edu-name">Certified Practising Accountant</div>
+          <div class="edu-institution">CPA Australia</div>
+        </div>
+        <div class="cert-badge">CPA</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div class="edu-name">Snowflake Fundamentals Certificate</div>
+          <div class="edu-institution">Snowflake Inc.</div>
+        </div>
+        <div class="cert-badge">SnowPro Core</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div class="edu-name">Power BI Data Analyst — PL-300</div>
+          <div class="edu-institution">Microsoft</div>
+        </div>
+        <div class="cert-badge">PL-300</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div class="edu-name">Xero Advisory Certificate</div>
+          <div class="edu-institution">Xero</div>
+        </div>
+        <div class="cert-badge">Xero</div>
+      </div>
+      <div class="edu-item">
+        <div>
+          <div class="edu-name">BSc (Hons) Mathematics and Economics</div>
+          <div class="edu-institution">University Malaysia Sabah</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LANGUAGES -->
+  <section>
+    <div class="section-label">Languages</div>
+    <div class="lang-row">
+      <div class="lang-item"><span class="lang-dot"></span>English</div>
+      <div class="lang-item"><span class="lang-dot"></span>Mandarin</div>
+      <div class="lang-item"><span class="lang-dot"></span>Malay</div>
+      <div class="lang-item"><span class="lang-dot"></span>Hokkien</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Simon Hooi · Perth, WA · simonhooi.cs@gmail.com</p>
+  </footer>
+
+</div>
+</body>
+</html>
